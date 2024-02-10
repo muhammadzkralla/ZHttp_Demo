@@ -1,17 +1,18 @@
 package com.zkrallah.zhttpdemo.presentation.main
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -29,8 +30,6 @@ import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.zkrallah.zhttpdemo.domain.model.ShopItem
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 private const val TAG = "MainScreens"
 
@@ -158,20 +157,29 @@ fun NetworkSettingsFormPreview() {
 
 @Composable
 fun MainScreen(items: List<ShopItem>?, mainViewModel: MainViewModel) {
-    var dynamicComposable by remember { mutableStateOf<(@Composable () -> Unit)?> (null) }
-    var isDialogShown by remember { mutableStateOf(false) }
+    var currentDetailsDialog by remember { mutableStateOf<(@Composable () -> Unit)?> (null) }
+    var currentDetailDialogState by remember { mutableStateOf(false) }
+    var currentItemDialog by remember { mutableStateOf<(@Composable () -> Unit)?> (null) }
+    var currentItemDialogState by remember { mutableStateOf(false) }
 
     ItemList(items = items) { item ->
-        isDialogShown = true
-        dynamicComposable = {
+        currentDetailDialogState = true
+        currentDetailsDialog = {
             CustomDialog(
                 item,
-                onDismiss = { isDialogShown = false },
+                onDismiss = { currentDetailDialogState = false },
                 mainViewModel
             )
         }
     }
-    if (isDialogShown) AnyComposable(dynamicComposable)
+    Fab {
+        currentItemDialogState = true
+        currentItemDialog = {
+            ItemDialog(onDismiss = { currentItemDialogState = false }, mainViewModel = mainViewModel)
+        }
+    }
+    if (currentItemDialogState) AnyComposable(currentItemDialog)
+    if (currentDetailDialogState) AnyComposable(currentDetailsDialog)
 }
 
 @Composable
@@ -180,7 +188,8 @@ fun ItemCard(shopItem: ShopItem, onClick: (item: ShopItem) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp).clickable {
+            .padding(16.dp)
+            .clickable {
                 onClick(shopItem)
             }
     ) {
@@ -246,5 +255,27 @@ fun AnyComposable(
 ) {
     anyComposable?.let {
         anyComposable()
+    }
+}
+
+@Composable
+fun Fab(onFabClicked: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        Spacer(modifier = Modifier.weight(1f))
+        FloatingActionButton(
+            onClick = {
+                onFabClicked()
+            },
+            modifier = Modifier
+                .align(Alignment.End)
+                .padding(16.dp)
+        ) {
+            // Custom image for the FAB
+            Icon(imageVector = Icons.Rounded.Add, contentDescription = "Cancel")
+        }
     }
 }

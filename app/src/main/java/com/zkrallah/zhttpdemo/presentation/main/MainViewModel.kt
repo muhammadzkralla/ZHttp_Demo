@@ -39,6 +39,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             mainRepo.login(userName, password, object : ZListener<AuthResponse> {
                 override fun onSuccess(response: Response<AuthResponse>?) {
+                    Log.d(TAG, "onSuccess: $response")
                     _auth.value = response?.body
                 }
 
@@ -70,6 +71,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             mainRepo.addProduct(product, object : ZListener<ShopItem> {
                 override fun onSuccess(response: Response<ShopItem>?) {
+                    Log.d(TAG, "onSuccess: $response")
                     _addedProduct.value = response?.body
                 }
 

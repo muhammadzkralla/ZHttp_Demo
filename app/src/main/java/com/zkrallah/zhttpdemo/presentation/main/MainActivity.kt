@@ -27,13 +27,30 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        mainViewModel.fetchProducts()
+        login()
+        fetchProducts()
         setObservers()
     }
 
+    private fun login() = mainViewModel.fetchProducts()
+
+    private fun fetchProducts() = mainViewModel.login("mor_2314", "83r5^_")
+
     private fun setObservers() {
+        loginObserver()
         fetchObserver()
         deleteObserver()
+    }
+
+    private fun loginObserver() {
+        lifecycleScope.launch {
+            mainViewModel.auth.collectLatest { authResponse ->
+                authResponse?.let {
+                    Toast.makeText(this@MainActivity, authResponse.toString(), Toast.LENGTH_LONG)
+                        .show()
+                }
+            }
+        }
     }
 
     private fun deleteObserver() {
