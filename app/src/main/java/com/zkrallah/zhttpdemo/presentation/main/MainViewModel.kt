@@ -8,8 +8,7 @@ import com.zkrallah.zhttp.MultipartBody
 import com.zkrallah.zhttp.Response
 import com.zkrallah.zhttp.ZListener
 import com.zkrallah.zhttpdemo.domain.model.AuthResponse
-import com.zkrallah.zhttpdemo.domain.model.DeleteResponse
-import com.zkrallah.zhttpdemo.domain.model.Item
+import com.zkrallah.zhttpdemo.domain.model.ShopItem
 import com.zkrallah.zhttpdemo.domain.repo.MainRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,15 +22,15 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
     private val _auth: MutableStateFlow<AuthResponse?> = MutableStateFlow(null)
     val auth = _auth.asStateFlow()
-    private val _products: MutableStateFlow<List<Item>?> = MutableStateFlow(null)
+    private val _products: MutableStateFlow<List<ShopItem>?> = MutableStateFlow(null)
     val products = _products.asStateFlow()
-    private val _addedProduct: MutableStateFlow<Item?> = MutableStateFlow(null)
+    private val _addedProduct: MutableStateFlow<ShopItem?> = MutableStateFlow(null)
     val addedProduct = _addedProduct.asStateFlow()
-    private val _deletedProduct: MutableStateFlow<DeleteResponse?> = MutableStateFlow(null)
+    private val _deletedProduct: MutableStateFlow<ShopItem?> = MutableStateFlow(null)
     val deletedProduct = _deletedProduct.asStateFlow()
-    private val _puttedProduct: MutableStateFlow<Item?> = MutableStateFlow(null)
+    private val _puttedProduct: MutableStateFlow<ShopItem?> = MutableStateFlow(null)
     val puttedProduct = _puttedProduct.asStateFlow()
-    private val _patchedProduct: MutableStateFlow<Item?> = MutableStateFlow(null)
+    private val _patchedProduct: MutableStateFlow<ShopItem?> = MutableStateFlow(null)
     val patchedProduct = _patchedProduct.asStateFlow()
     private val _uploadMessage: MutableStateFlow<String?> = MutableStateFlow(null)
     val uploadMessage = _uploadMessage.asStateFlow()
@@ -53,8 +52,9 @@ class MainViewModel @Inject constructor(
 
     fun fetchProducts() {
         viewModelScope.launch {
-            mainRepo.fetchProducts(object : ZListener<List<Item>> {
-                override fun onSuccess(response: Response<List<Item>>?) {
+            mainRepo.fetchProducts(object : ZListener<List<ShopItem>> {
+                override fun onSuccess(response: Response<List<ShopItem>>?) {
+                    Log.d(TAG, "onSuccess: $response")
                     _products.value = response?.body
                 }
 
@@ -66,10 +66,10 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun addProduct(product: Item) {
+    fun addProduct(product: ShopItem) {
         viewModelScope.launch {
-            mainRepo.addProduct(product, object : ZListener<Item> {
-                override fun onSuccess(response: Response<Item>?) {
+            mainRepo.addProduct(product, object : ZListener<ShopItem> {
+                override fun onSuccess(response: Response<ShopItem>?) {
                     _addedProduct.value = response?.body
                 }
 
@@ -82,8 +82,8 @@ class MainViewModel @Inject constructor(
 
     fun deleteProduct(id: Int) {
         viewModelScope.launch {
-            mainRepo.deleteProduct(id, object : ZListener<DeleteResponse> {
-                override fun onSuccess(response: Response<DeleteResponse>?) {
+            mainRepo.deleteProduct(id, object : ZListener<ShopItem> {
+                override fun onSuccess(response: Response<ShopItem>?) {
                     _deletedProduct.value = response?.body
                 }
 
@@ -94,10 +94,10 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun updateOrAdd(id: Int, product: Item) {
+    fun updateOrAdd(id: Int, product: ShopItem) {
         viewModelScope.launch {
-            mainRepo.updateOrAdd(id, product, object : ZListener<Item> {
-                override fun onSuccess(response: Response<Item>?) {
+            mainRepo.updateOrAdd(id, product, object : ZListener<ShopItem> {
+                override fun onSuccess(response: Response<ShopItem>?) {
                     _puttedProduct.value = response?.body
                 }
 
@@ -110,8 +110,8 @@ class MainViewModel @Inject constructor(
 
     fun update(id: Int, parameter: JsonObject) {
         viewModelScope.launch {
-            mainRepo.update(id, parameter, object : ZListener<Item> {
-                override fun onSuccess(response: Response<Item>?) {
+            mainRepo.update(id, parameter, object : ZListener<ShopItem> {
+                override fun onSuccess(response: Response<ShopItem>?) {
                     _patchedProduct.value = response?.body
                 }
 

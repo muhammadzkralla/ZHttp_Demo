@@ -1,8 +1,9 @@
 package com.zkrallah.zhttpdemo.presentation.main
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -11,17 +12,23 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.zkrallah.zhttpdemo.domain.model.Item
+import coil.annotation.ExperimentalCoilApi
+import coil.compose.rememberImagePainter
+import com.zkrallah.zhttpdemo.domain.model.ShopItem
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -150,94 +157,87 @@ fun NetworkSettingsFormPreview() {
 }
 
 @Composable
-fun MainScreen(items: List<Item>?) {
+fun MainScreen(items: List<ShopItem>?, mainViewModel: MainViewModel) {
     var dynamicComposable by remember { mutableStateOf<(@Composable () -> Unit)?> (null) }
     var isDialogShown by remember { mutableStateOf(false) }
 
-    Items(items = items) { item ->
+    ItemList(items = items) { item ->
         isDialogShown = true
         dynamicComposable = {
             CustomDialog(
-                title = "Title",
-                message = "This is a custom dialog for item: ${item.name}",
+                item,
                 onDismiss = { isDialogShown = false },
-                confirmText = "OK",
-                cancelText = "Cancel"
+                mainViewModel
             )
         }
     }
     if (isDialogShown) AnyComposable(dynamicComposable)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ItemCard(item: Item, onClick: (item: Item) -> Unit) {
-    Box {
-        Card(
+fun ItemCard(shopItem: ShopItem, onClick: (item: ShopItem) -> Unit) {
+    // Use the provided item information to create a card
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp).clickable {
+                onClick(shopItem)
+            }
+    ) {
+        // Display the image using the provided resource ID
+        CoilImage(
+            data = shopItem.image.orEmpty(),
+            contentDescription = null, // Provide content description as per your needs
             modifier = Modifier
-                .padding(8.dp)
-                .fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp),
-            border = BorderStroke(1.dp, Color.LightGray),
-            onClick = {
-                onClick(item)
-            }
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Text(text = "ID: ${item.id ?: "N/A"}")
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(text = "Name: ${item.name ?: "N/A"}")
-                Spacer(modifier = Modifier.height(8.dp))
-                item.data?.let { data ->
-                    Text(
-                        text = "Data: ${data.entries.joinToString(", ") { "${it.key}: ${it.value}" }}"
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-                Text(
-                    text = "Created At: ${formatDate(item.createdAt)}"
-                )
-            }
-        }
+                .fillMaxWidth()
+                .height(200.dp)
+                .clip(shape = MaterialTheme.shapes.medium),
+            contentScale = ContentScale.Crop
+        )
 
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Display other details of the item
+        Text(text = shopItem.title.orEmpty(), fontWeight = FontWeight.Bold)
+        Text(text = "Price: ${shopItem.price.orEmpty()}")
+        Text(text = "Category: ${shopItem.category.orEmpty()}")
+        Text(text = "Description: ${shopItem.description.orEmpty()}")
     }
 }
 
 @Composable
-fun formatDate(dateString: String?): String {
-    return dateString?.let {
-        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-        val date = sdf.parse(it)
-        val outputFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
-        date?.let {
-            outputFormat.format(date)
-        } ?: ""
-    } ?: "N/A"
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun Items(items: List<Item>?, onClick: (item: Item) -> Unit) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        stickyHeader {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(text = "Items")
-            }
-        }
+fun ItemList(items: List<ShopItem>?, onClick: (shopItem: ShopItem) -> Unit) {
+    // Create a LazyColumn with ItemCard for each item in the list
+    LazyColumn {
         items?.let {
             itemsIndexed(items) { _, item ->
                 ItemCard(item, onClick)
             }
         }
     }
+}
+
+@OptIn(ExperimentalCoilApi::class)
+@Composable
+fun CoilImage(
+    data: String,
+    contentDescription: String?,
+    modifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Crop
+) {
+    // Use Coil's rememberImagePainter to load and display the image
+    val painter = rememberImagePainter(
+        data = data,
+        builder = {
+            // You can apply transformations here if needed
+        }
+    )
+    Image(
+        painter = painter,
+        contentDescription = contentDescription,
+        modifier = modifier,
+        contentScale = contentScale
+    )
 }
 
 @Composable

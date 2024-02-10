@@ -9,18 +9,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.zkrallah.zhttpdemo.domain.model.ShopItem
 
 @Composable
 fun CustomDialog(
-    title: String,
-    message: String,
+    item: ShopItem,
     onDismiss: () -> Unit,
-    confirmText: String = "Confirm",
-    cancelText: String = "Cancel"
+    mainViewModel: MainViewModel
 ) {
     Dialog(
         onDismissRequest = {
@@ -46,36 +44,35 @@ fun CustomDialog(
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = title)
+                    Text(text = "Item")
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = message)
+                    Text(text = "This is a custom dialog for item: ${item.title}")
                     Spacer(modifier = Modifier.height(16.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        Button(onClick = onDismiss) {
-                            Text(text = cancelText)
+                        Button(onClick = {
+                            mainViewModel.deleteProduct(item.id ?: 0)
+                            onDismiss()
+                        }) {
+                            Text(text = "DELETE")
                         }
                         Spacer(modifier = Modifier.width(8.dp))
-                        Button(onClick = onDismiss) {
-                            Text(text = confirmText)
+                        Button(onClick = {
+                            onDismiss()
+                        }) {
+                            Text(text = "PUT")
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Button(onClick = {
+                            onDismiss()
+                        }) {
+                            Text(text = "PATCH")
                         }
                     }
                 }
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun PreviewDialog() {
-    CustomDialog(
-        title = "Title",
-        message = "This is a custom dialog for item: ",
-        onDismiss = {  },
-        confirmText = "OK",
-        cancelText = "Cancel"
-    )
 }
