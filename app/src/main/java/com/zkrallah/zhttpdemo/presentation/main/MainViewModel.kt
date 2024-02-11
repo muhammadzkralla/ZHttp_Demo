@@ -8,6 +8,7 @@ import com.zkrallah.zhttp.MultipartBody
 import com.zkrallah.zhttp.Response
 import com.zkrallah.zhttp.ZListener
 import com.zkrallah.zhttpdemo.domain.model.AuthResponse
+import com.zkrallah.zhttpdemo.domain.model.NewTitle
 import com.zkrallah.zhttpdemo.domain.model.ShopItem
 import com.zkrallah.zhttpdemo.domain.repo.MainRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -114,6 +115,21 @@ class MainViewModel @Inject constructor(
     fun update(id: Int, parameter: JsonObject) {
         viewModelScope.launch {
             mainRepo.update(id, parameter, object : ZListener<ShopItem> {
+                override fun onSuccess(response: Response<ShopItem>?) {
+                    Log.d(TAG, "onSuccess: $response")
+                    _patchedProduct.value = response?.body
+                }
+
+                override fun onFailure(error: Exception) {
+                    Log.e(TAG, "onFailure: $error", error)
+                }
+            })
+        }
+    }
+
+    fun update(id: Int, newTitle: NewTitle) {
+        viewModelScope.launch {
+            mainRepo.update(id, newTitle, object : ZListener<ShopItem> {
                 override fun onSuccess(response: Response<ShopItem>?) {
                     Log.d(TAG, "onSuccess: $response")
                     _patchedProduct.value = response?.body

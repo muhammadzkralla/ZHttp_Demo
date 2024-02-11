@@ -4,6 +4,7 @@ import com.google.gson.JsonObject
 import com.zkrallah.zhttp.MultipartBody
 import com.zkrallah.zhttp.ZListener
 import com.zkrallah.zhttpdemo.domain.model.AuthResponse
+import com.zkrallah.zhttpdemo.domain.model.NewTitle
 import com.zkrallah.zhttpdemo.domain.model.ShopItem
 
 interface MainRepo {
@@ -19,6 +20,8 @@ interface MainRepo {
     fun updateOrAdd(id: Int, product: ShopItem, callback: ZListener<ShopItem>)
 
     fun update(id: Int, parameter: JsonObject, callback: ZListener<ShopItem>)
+
+    fun update(id: Int, parameter: NewTitle, callback: ZListener<ShopItem>)
 
     fun uploadImagePart(parts: List<MultipartBody>, callback: ZListener<String>)
 }

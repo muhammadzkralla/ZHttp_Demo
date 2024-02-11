@@ -9,6 +9,7 @@ import com.zkrallah.zhttp.ZListener
 import com.zkrallah.zhttpdemo.di.ImgurClient
 import com.zkrallah.zhttpdemo.di.StoreClient
 import com.zkrallah.zhttpdemo.domain.model.AuthResponse
+import com.zkrallah.zhttpdemo.domain.model.NewTitle
 import com.zkrallah.zhttpdemo.domain.model.ShopItem
 import com.zkrallah.zhttpdemo.domain.repo.MainRepo
 import com.zkrallah.zhttpdemo.util.Imgur
@@ -44,6 +45,10 @@ class MainRepoImpl @Inject constructor(
     }
 
     override fun update(id: Int, parameter: JsonObject, callback: ZListener<ShopItem>) {
+        val request = storeClient.patch("products/$id", parameter, null, null, callback)
+    }
+
+    override fun update(id: Int, parameter: NewTitle, callback: ZListener<ShopItem>) {
         val request = storeClient.patch("products/$id", parameter, null, null, callback)
     }
 

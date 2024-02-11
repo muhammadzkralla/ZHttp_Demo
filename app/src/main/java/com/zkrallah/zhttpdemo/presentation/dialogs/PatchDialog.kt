@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.google.gson.JsonObject
+import com.zkrallah.zhttpdemo.domain.model.NewTitle
 import com.zkrallah.zhttpdemo.domain.model.ShopItem
 import com.zkrallah.zhttpdemo.presentation.main.MainViewModel
 
@@ -88,9 +89,7 @@ fun PatchDialog(
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Button(onClick = {
-                            val newTitle = JsonObject().apply {
-                                addProperty("title", titleState)
-                            }
+                            val newTitle = NewTitle(title = titleState)
                             mainViewModel.update(item.id!!, newTitle)
                             onDismiss()
                         }) {
