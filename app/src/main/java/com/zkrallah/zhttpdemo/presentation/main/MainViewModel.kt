@@ -115,6 +115,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             mainRepo.update(id, parameter, object : ZListener<ShopItem> {
                 override fun onSuccess(response: Response<ShopItem>?) {
+                    Log.d(TAG, "onSuccess: $response")
                     _patchedProduct.value = response?.body
                 }
 

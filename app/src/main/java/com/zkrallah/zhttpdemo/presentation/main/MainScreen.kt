@@ -22,6 +22,7 @@ import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.zkrallah.zhttpdemo.domain.model.ShopItem
 import com.zkrallah.zhttpdemo.presentation.dialogs.ItemDialog
+import com.zkrallah.zhttpdemo.presentation.dialogs.PatchDialog
 import com.zkrallah.zhttpdemo.presentation.dialogs.PostDialog
 import com.zkrallah.zhttpdemo.presentation.dialogs.PutDialog
 
@@ -33,6 +34,8 @@ fun MainScreen(items: List<ShopItem>?, mainViewModel: MainViewModel) {
     var currentPostDialogState by remember { mutableStateOf(false) }
     var currentPutDialog by remember { mutableStateOf<(@Composable () -> Unit)?>(null) }
     var currentPutDialogState by remember { mutableStateOf(false) }
+    var currentPatchDialog by remember { mutableStateOf<(@Composable () -> Unit)?>(null) }
+    var currentPatchDialogState by remember { mutableStateOf(false) }
 
 
     ItemList(items = items) { item ->
@@ -42,12 +45,21 @@ fun MainScreen(items: List<ShopItem>?, mainViewModel: MainViewModel) {
                 currentPutDialogState = true
                 currentPutDialog = {
                     PutDialog(
-                        item,
+                        item = item,
                         onDismiss = { currentPutDialogState = false },
                         mainViewModel = mainViewModel
                     )
                 }
-            }, {}, mainViewModel
+            }, {
+                currentPatchDialogState = true
+                currentPatchDialog = {
+                    PatchDialog(
+                        item = item,
+                        onDismiss = { currentPatchDialogState = false },
+                        mainViewModel = mainViewModel
+                    )
+                }
+            }, mainViewModel
             )
         }
     }
@@ -59,9 +71,10 @@ fun MainScreen(items: List<ShopItem>?, mainViewModel: MainViewModel) {
             )
         }
     }
-    if (currentItemDialogState) AnyComposable(currentItemDialog)
-    if (currentPostDialogState) AnyComposable(currentPostDialog)
-    if (currentPutDialogState) AnyComposable(currentPutDialog)
+    if (currentItemDialogState) DrawComposable(currentItemDialog)
+    if (currentPostDialogState) DrawComposable(currentPostDialog)
+    if (currentPutDialogState) DrawComposable(currentPutDialog)
+    if (currentPatchDialogState) DrawComposable(currentPatchDialog)
 }
 
 @Composable
@@ -127,7 +140,7 @@ fun CoilImage(
 }
 
 @Composable
-fun AnyComposable(
+fun DrawComposable(
     anyComposable: (@Composable () -> Unit)? = null
 ) {
     anyComposable?.let {

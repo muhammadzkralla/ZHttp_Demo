@@ -41,6 +41,21 @@ class MainActivity : ComponentActivity() {
         fetchObserver()
         deleteObserver()
         updateOrAddObserver()
+        updateObserver()
+    }
+
+    private fun updateObserver() {
+        lifecycleScope.launch {
+            mainViewModel.patchedProduct.collectLatest { product ->
+                product?.let {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Patched item of id: ${product.id}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
     }
 
     private fun updateOrAddObserver() {
@@ -88,10 +103,5 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-
-
-    companion object {
-        private const val TAG = "MainActivity"
     }
 }
