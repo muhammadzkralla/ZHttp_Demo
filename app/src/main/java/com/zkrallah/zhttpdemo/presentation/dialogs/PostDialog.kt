@@ -1,6 +1,5 @@
-package com.zkrallah.zhttpdemo.presentation.main
+package com.zkrallah.zhttpdemo.presentation.dialogs
 
-import android.content.Context
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -30,11 +29,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.zkrallah.zhttpdemo.domain.model.ShopItem
+import com.zkrallah.zhttpdemo.presentation.main.MainViewModel
 import com.zkrallah.zhttpdemo.util.cacheImageToFile
 import com.zkrallah.zhttpdemo.util.getImageFileFromRealPath
 
 @Composable
-fun ItemDialog(
+fun PostDialog(
     onDismiss: () -> Unit,
     mainViewModel: MainViewModel
 ) {
@@ -179,7 +179,7 @@ fun ItemDialog(
                             mainViewModel.addProduct(item)
                             onDismiss()
                         }) {
-                            Text(text = "OK")
+                            Text(text = "CONFIRM")
                         }
                         Spacer(modifier = Modifier.width(8.dp))
                         Button(onClick = {
@@ -188,15 +188,15 @@ fun ItemDialog(
                             Text(text = "CANCEL")
                         }
                         Spacer(modifier = Modifier.width(8.dp))
-                        FloatingActionButton(
-                            onClick = {getContent.launch("image/*")},
-                            modifier = Modifier
-                                .align(Alignment.Bottom)
-                                .padding(16.dp)
-                        ) {
-                            // Custom image for the FAB
-                            Icon(imageVector = Icons.Rounded.AccountBox, contentDescription = "Img")
-                        }
+                    }
+                    FloatingActionButton(
+                        onClick = {getContent.launch("image/*")},
+                        modifier = Modifier
+                            .align(Alignment.End)
+                            .padding(16.dp)
+                    ) {
+                        // Custom image for the FAB
+                        Icon(imageVector = Icons.Rounded.AccountBox, contentDescription = "Img")
                     }
                 }
             }

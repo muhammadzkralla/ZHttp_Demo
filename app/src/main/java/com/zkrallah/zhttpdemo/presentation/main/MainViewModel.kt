@@ -100,6 +100,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             mainRepo.updateOrAdd(id, product, object : ZListener<ShopItem> {
                 override fun onSuccess(response: Response<ShopItem>?) {
+                    Log.d(TAG, "onSuccess: $response")
                     _puttedProduct.value = response?.body
                 }
 

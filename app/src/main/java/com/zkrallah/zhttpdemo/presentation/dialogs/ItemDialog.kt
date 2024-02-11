@@ -1,4 +1,4 @@
-package com.zkrallah.zhttpdemo.presentation.main
+package com.zkrallah.zhttpdemo.presentation.dialogs
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -13,11 +13,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.zkrallah.zhttpdemo.domain.model.ShopItem
+import com.zkrallah.zhttpdemo.presentation.main.MainViewModel
 
 @Composable
-fun CustomDialog(
+fun ItemDialog(
     item: ShopItem,
     onDismiss: () -> Unit,
+    onPutButtonClicked: () -> Unit,
+    onPatchButtonClicked: () -> Unit,
     mainViewModel: MainViewModel
 ) {
     Dialog(
@@ -60,12 +63,14 @@ fun CustomDialog(
                         }
                         Spacer(modifier = Modifier.width(8.dp))
                         Button(onClick = {
+                            onPutButtonClicked()
                             onDismiss()
                         }) {
                             Text(text = "PUT")
                         }
                         Spacer(modifier = Modifier.width(8.dp))
                         Button(onClick = {
+                            onPatchButtonClicked()
                             onDismiss()
                         }) {
                             Text(text = "PATCH")

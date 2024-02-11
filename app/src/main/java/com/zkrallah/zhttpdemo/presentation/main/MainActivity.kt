@@ -40,6 +40,22 @@ class MainActivity : ComponentActivity() {
         loginObserver()
         fetchObserver()
         deleteObserver()
+        updateOrAddObserver()
+    }
+
+    private fun updateOrAddObserver() {
+        lifecycleScope.launch {
+            mainViewModel.puttedProduct.collectLatest { product ->
+                product?.let {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Updated item of id: ${product.id}",
+                        Toast.LENGTH_LONG
+                    )
+                        .show()
+                }
+            }
+        }
     }
 
     private fun loginObserver() {

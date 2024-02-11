@@ -1,198 +1,78 @@
 package com.zkrallah.zhttpdemo.presentation.main
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.Clear
-import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.zkrallah.zhttpdemo.domain.model.ShopItem
-
-private const val TAG = "MainScreens"
-
-@Composable
-fun NetworkSettingsForm() {
-    var baseUrl by remember { mutableStateOf("") }
-    var connectionTimeout by remember { mutableStateOf("") }
-    var readTimeout by remember { mutableStateOf("") }
-    var defaultHeaders by remember { mutableStateOf("") }
-    var bufferSize by remember { mutableStateOf("") }
-
-    Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxSize()
-    ) {
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = baseUrl,
-            onValueChange = { baseUrl = it },
-            label = { Text("Base URL") },
-            colors = TextFieldDefaults.colors(
-                disabledTextColor = Color.Gray,
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                disabledContainerColor = Color.Gray,
-                focusedIndicatorColor = Color.Red,
-                unfocusedIndicatorColor = Color.Black,
-                disabledIndicatorColor = Color.Transparent
-            )
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = connectionTimeout,
-            onValueChange = { connectionTimeout = it },
-            label = { Text("Connection Timeout (ms)") },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Number
-            ),
-            colors = TextFieldDefaults.colors(
-                disabledTextColor = Color.Gray,
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                disabledContainerColor = Color.Gray,
-                focusedIndicatorColor = Color.Red,
-                unfocusedIndicatorColor = Color.Black,
-                disabledIndicatorColor = Color.Transparent
-            )
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = readTimeout,
-            onValueChange = { readTimeout = it },
-            label = { Text("Read Timeout (ms)") },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Number
-            ),
-            colors = TextFieldDefaults.colors(
-                disabledTextColor = Color.Gray,
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                disabledContainerColor = Color.Gray,
-                focusedIndicatorColor = Color.Red,
-                unfocusedIndicatorColor = Color.Black,
-                disabledIndicatorColor = Color.Transparent
-            )
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = defaultHeaders,
-            onValueChange = { defaultHeaders = it },
-            label = { Text("Default Headers (comma separated)") },
-            colors = TextFieldDefaults.colors(
-                disabledTextColor = Color.Gray,
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                disabledContainerColor = Color.Gray,
-                focusedIndicatorColor = Color.Red,
-                unfocusedIndicatorColor = Color.Black,
-                disabledIndicatorColor = Color.Transparent
-            )
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = bufferSize,
-            onValueChange = { bufferSize = it },
-            label = { Text("Buffer Size") },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Number
-            ),
-            colors = TextFieldDefaults.colors(
-                disabledTextColor = Color.Gray,
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                disabledContainerColor = Color.Gray,
-                focusedIndicatorColor = Color.Red,
-                unfocusedIndicatorColor = Color.Black,
-                disabledIndicatorColor = Color.Transparent
-            )
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = {
-                val headersList = defaultHeaders.split(",").map {
-                    val keyValue = it.split("=")
-                    Pair(keyValue[0], keyValue[1])
-                }
-            },
-            modifier = Modifier.align(alignment = androidx.compose.ui.Alignment.CenterHorizontally)
-        ) {
-            Text(text = "Build")
-        }
-    }
-}
-
-@Preview("NetworkSettingsFormPreview")
-@Composable
-fun NetworkSettingsFormPreview() {
-    NetworkSettingsForm()
-}
+import com.zkrallah.zhttpdemo.presentation.dialogs.ItemDialog
+import com.zkrallah.zhttpdemo.presentation.dialogs.PostDialog
+import com.zkrallah.zhttpdemo.presentation.dialogs.PutDialog
 
 @Composable
 fun MainScreen(items: List<ShopItem>?, mainViewModel: MainViewModel) {
-    var currentDetailsDialog by remember { mutableStateOf<(@Composable () -> Unit)?> (null) }
-    var currentDetailDialogState by remember { mutableStateOf(false) }
-    var currentItemDialog by remember { mutableStateOf<(@Composable () -> Unit)?> (null) }
+    var currentItemDialog by remember { mutableStateOf<(@Composable () -> Unit)?>(null) }
     var currentItemDialogState by remember { mutableStateOf(false) }
+    var currentPostDialog by remember { mutableStateOf<(@Composable () -> Unit)?>(null) }
+    var currentPostDialogState by remember { mutableStateOf(false) }
+    var currentPutDialog by remember { mutableStateOf<(@Composable () -> Unit)?>(null) }
+    var currentPutDialogState by remember { mutableStateOf(false) }
+
 
     ItemList(items = items) { item ->
-        currentDetailDialogState = true
-        currentDetailsDialog = {
-            CustomDialog(
-                item,
-                onDismiss = { currentDetailDialogState = false },
-                mainViewModel
+        currentItemDialogState = true
+        currentItemDialog = {
+            ItemDialog(item, onDismiss = { currentItemDialogState = false }, {
+                currentPutDialogState = true
+                currentPutDialog = {
+                    PutDialog(
+                        item,
+                        onDismiss = { currentPutDialogState = false },
+                        mainViewModel = mainViewModel
+                    )
+                }
+            }, {}, mainViewModel
             )
         }
     }
     Fab {
-        currentItemDialogState = true
-        currentItemDialog = {
-            ItemDialog(onDismiss = { currentItemDialogState = false }, mainViewModel = mainViewModel)
+        currentPostDialogState = true
+        currentPostDialog = {
+            PostDialog(
+                onDismiss = { currentPostDialogState = false }, mainViewModel = mainViewModel
+            )
         }
     }
     if (currentItemDialogState) AnyComposable(currentItemDialog)
-    if (currentDetailDialogState) AnyComposable(currentDetailsDialog)
+    if (currentPostDialogState) AnyComposable(currentPostDialog)
+    if (currentPutDialogState) AnyComposable(currentPutDialog)
 }
 
 @Composable
 fun ItemCard(shopItem: ShopItem, onClick: (item: ShopItem) -> Unit) {
     // Use the provided item information to create a card
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .clickable {
-                onClick(shopItem)
-            }
-    ) {
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(16.dp)
+        .clickable {
+            onClick(shopItem)
+        }) {
         // Display the image using the provided resource ID
         CoilImage(
             data = shopItem.image.orEmpty(),
@@ -235,12 +115,9 @@ fun CoilImage(
     contentScale: ContentScale = ContentScale.Crop
 ) {
     // Use Coil's rememberImagePainter to load and display the image
-    val painter = rememberImagePainter(
-        data = data,
-        builder = {
-            // You can apply transformations here if needed
-        }
-    )
+    val painter = rememberImagePainter(data = data, builder = {
+        // You can apply transformations here if needed
+    })
     Image(
         painter = painter,
         contentDescription = contentDescription,
@@ -269,8 +146,7 @@ fun Fab(onFabClicked: () -> Unit) {
         FloatingActionButton(
             onClick = {
                 onFabClicked()
-            },
-            modifier = Modifier
+            }, modifier = Modifier
                 .align(Alignment.End)
                 .padding(16.dp)
         ) {
