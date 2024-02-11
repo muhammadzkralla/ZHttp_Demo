@@ -1,6 +1,8 @@
 package com.zkrallah.zhttpdemo.data.repo
 
+import android.util.Log
 import com.google.gson.JsonObject
+import com.zkrallah.zhttp.Header
 import com.zkrallah.zhttp.MultipartBody
 import com.zkrallah.zhttp.ZHttpClient
 import com.zkrallah.zhttp.ZListener
@@ -9,12 +11,13 @@ import com.zkrallah.zhttpdemo.di.StoreClient
 import com.zkrallah.zhttpdemo.domain.model.AuthResponse
 import com.zkrallah.zhttpdemo.domain.model.ShopItem
 import com.zkrallah.zhttpdemo.domain.repo.MainRepo
+import com.zkrallah.zhttpdemo.util.Imgur
 import javax.inject.Inject
 
 class MainRepoImpl @Inject constructor(
     @StoreClient private val storeClient: ZHttpClient,
     @ImgurClient private val imgurClient: ZHttpClient
-) : MainRepo{
+) : MainRepo {
     override fun login(userName: String, password: String, callback: ZListener<AuthResponse>) {
         val body = JsonObject().apply {
             addProperty("username", userName)
@@ -45,7 +48,10 @@ class MainRepoImpl @Inject constructor(
     }
 
     override fun uploadImagePart(parts: List<MultipartBody>, callback: ZListener<String>) {
-        val request = imgurClient.multiPart("3/image", parts, null, null, callback)
+        val headers = listOf(
+            Header("Authorization", Imgur.TOKEN)
+        )
+        val request = imgurClient.multiPart("3/image", parts, headers, null, callback)
     }
 
     companion object {

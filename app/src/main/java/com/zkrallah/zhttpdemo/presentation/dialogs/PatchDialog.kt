@@ -62,7 +62,7 @@ fun PatchDialog(
                     TextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = titleState,
-                        onValueChange = {titleState = it},
+                        onValueChange = { titleState = it },
                         label = { Text("Title...") },
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Text

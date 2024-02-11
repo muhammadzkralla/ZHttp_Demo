@@ -39,9 +39,36 @@ class MainActivity : ComponentActivity() {
     private fun setObservers() {
         loginObserver()
         fetchObserver()
+        addObserver()
         deleteObserver()
         updateOrAddObserver()
         updateObserver()
+        uploadImageObserver()
+    }
+
+    private fun uploadImageObserver() {
+        lifecycleScope.launch {
+            mainViewModel.uploadMessage.collectLatest { message ->
+                message?.let {
+                    Toast.makeText(this@MainActivity, "Uploaded: $message", Toast.LENGTH_LONG)
+                        .show()
+                }
+            }
+        }
+    }
+
+    private fun addObserver() {
+        lifecycleScope.launch {
+            mainViewModel.addedProduct.collectLatest { product ->
+                product?.let {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Added Item of id: ${product.id}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
     }
 
     private fun updateObserver() {
@@ -66,8 +93,7 @@ class MainActivity : ComponentActivity() {
                         this@MainActivity,
                         "Updated item of id: ${product.id}",
                         Toast.LENGTH_LONG
-                    )
-                        .show()
+                    ).show()
                 }
             }
         }
@@ -77,8 +103,11 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch {
             mainViewModel.auth.collectLatest { authResponse ->
                 authResponse?.let {
-                    Toast.makeText(this@MainActivity, authResponse.toString(), Toast.LENGTH_LONG)
-                        .show()
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Your token: ${authResponse.token}",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }
@@ -86,9 +115,13 @@ class MainActivity : ComponentActivity() {
 
     private fun deleteObserver() {
         lifecycleScope.launch {
-            mainViewModel.deletedProduct.collectLatest { deleteResponse ->
-                deleteResponse?.let {
-                    Toast.makeText(this@MainActivity, deleteResponse.toString(), Toast.LENGTH_LONG)
+            mainViewModel.deletedProduct.collectLatest { product ->
+                product?.let {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Deleted item of id: ${product.id}",
+                        Toast.LENGTH_LONG
+                    )
                         .show()
                 }
             }

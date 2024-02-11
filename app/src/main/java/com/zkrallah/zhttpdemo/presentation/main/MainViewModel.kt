@@ -130,6 +130,7 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             mainRepo.uploadImagePart(parts, object : ZListener<String> {
                 override fun onSuccess(response: Response<String>?) {
+                    Log.d(TAG, "onSuccess: $response")
                     _uploadMessage.value = response?.body
                 }
 

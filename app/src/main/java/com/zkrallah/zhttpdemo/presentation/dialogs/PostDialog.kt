@@ -28,6 +28,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.zkrallah.zhttp.MultipartBody
 import com.zkrallah.zhttpdemo.domain.model.ShopItem
 import com.zkrallah.zhttpdemo.presentation.main.MainViewModel
 import com.zkrallah.zhttpdemo.util.cacheImageToFile
@@ -42,18 +43,24 @@ fun PostDialog(
     var priceState by remember { mutableStateOf("") }
     var descriptionState by remember { mutableStateOf("") }
     var categoryState by remember { mutableStateOf("") }
-    var imageState by remember { mutableStateOf("") }
     val context = LocalContext.current
-    val getContent = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri ->
-        if (uri != null) {
-            Log.d("PhotoPicker", "Selected URI: $uri")
-            val path = cacheImageToFile(context, uri)
-            val file = getImageFileFromRealPath(path)
-            imageState = file.toString()
-        } else {
-            Log.d("PhotoPicker", "No media selected")
+    val getContent =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri ->
+            if (uri != null) {
+                Log.d("PhotoPicker", "Selected URI: $uri")
+                val path = cacheImageToFile(context, uri)
+                val file = getImageFileFromRealPath(path)
+                val imageMultipartBody = MultipartBody(
+                    fileName = "image",
+                    filePath = file.toString(),
+                    contentType = "image/*"
+                )
+                val parts = listOf(imageMultipartBody)
+                mainViewModel.uploadImagePart(parts)
+            } else {
+                Log.d("PhotoPicker", "No media selected")
+            }
         }
-    }
     Dialog(
         onDismissRequest = {
             onDismiss()
@@ -84,7 +91,7 @@ fun PostDialog(
                     TextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = titleState,
-                        onValueChange = {titleState = it},
+                        onValueChange = { titleState = it },
                         label = { Text("Title...") },
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Text
@@ -105,7 +112,7 @@ fun PostDialog(
                     TextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = priceState,
-                        onValueChange = {priceState = it},
+                        onValueChange = { priceState = it },
                         label = { Text("Price...") },
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Decimal
@@ -126,7 +133,7 @@ fun PostDialog(
                     TextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = descriptionState,
-                        onValueChange = {descriptionState = it},
+                        onValueChange = { descriptionState = it },
                         label = { Text("Description...") },
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Text
@@ -147,7 +154,7 @@ fun PostDialog(
                     TextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = categoryState,
-                        onValueChange = {categoryState = it},
+                        onValueChange = { categoryState = it },
                         label = { Text("Category...") },
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Text
@@ -173,13 +180,12 @@ fun PostDialog(
                                 title = titleState,
                                 price = priceState,
                                 description = descriptionState,
-                                category = categoryState,
-                                image = imageState
+                                category = categoryState
                             )
                             mainViewModel.addProduct(item)
                             onDismiss()
                         }) {
-                            Text(text = "CONFIRM")
+                            Text(text = "PUSH")
                         }
                         Spacer(modifier = Modifier.width(8.dp))
                         Button(onClick = {
@@ -190,7 +196,7 @@ fun PostDialog(
                         Spacer(modifier = Modifier.width(8.dp))
                     }
                     FloatingActionButton(
-                        onClick = {getContent.launch("image/*")},
+                        onClick = { getContent.launch("image/*") },
                         modifier = Modifier
                             .align(Alignment.End)
                             .padding(16.dp)
