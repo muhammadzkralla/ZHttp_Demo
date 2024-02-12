@@ -7,19 +7,19 @@ import com.zkrallah.zhttpdemo.domain.model.NewTitle
 import com.zkrallah.zhttpdemo.domain.model.ShopItem
 
 interface MainRepoSync {
-    fun login(userName: String, password: String): HttpResponse?
+    suspend fun login(userName: String, password: String): HttpResponse?
 
-    fun fetchProducts(): HttpResponse?
+    suspend fun fetchProducts(): HttpResponse?
 
-    fun addProduct(product: ShopItem): HttpResponse?
+    suspend fun addProduct(product: ShopItem): HttpResponse?
 
-    fun deleteProduct(id: Int): HttpResponse?
+    suspend fun deleteProduct(id: Int): HttpResponse?
 
-    fun updateOrAdd(id: Int, product: ShopItem): HttpResponse?
+    suspend fun updateOrAdd(id: Int, product: ShopItem): HttpResponse?
 
-    fun update(id: Int, parameter: JsonObject): HttpResponse?
+    suspend fun update(id: Int, parameter: JsonObject): HttpResponse?
 
-    fun update(id: Int, parameter: NewTitle): HttpResponse?
+    suspend fun update(id: Int, parameter: NewTitle): HttpResponse?
 
-    fun uploadImagePart(parts: List<MultipartBody>): HttpResponse?
+    suspend fun uploadImagePart(parts: List<MultipartBody>): HttpResponse?
 }
