@@ -32,9 +32,9 @@ class MainActivity : ComponentActivity() {
         setObservers()
     }
 
-    private fun login() = mainViewModel.fetchProducts()
+    private fun fetchProducts() = mainViewModel.fetchProductsSync()
 
-    private fun fetchProducts() = mainViewModel.login("mor_2314", "83r5^_")
+    private fun login() = mainViewModel.loginSync("mor_2314", "83r5^_")
 
     private fun setObservers() {
         loginObserver()

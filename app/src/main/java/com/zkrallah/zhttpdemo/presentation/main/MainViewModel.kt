@@ -3,6 +3,7 @@ package com.zkrallah.zhttpdemo.presentation.main
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.zkrallah.zhttp.MultipartBody
 import com.zkrallah.zhttp.Response
@@ -11,7 +12,11 @@ import com.zkrallah.zhttpdemo.domain.model.AuthResponse
 import com.zkrallah.zhttpdemo.domain.model.NewTitle
 import com.zkrallah.zhttpdemo.domain.model.ShopItem
 import com.zkrallah.zhttpdemo.domain.repo.MainRepo
+import com.zkrallah.zhttpdemo.domain.repo.MainRepoSync
+import com.zkrallah.zhttpdemo.util.Helper
+import com.zkrallah.zhttpdemo.util.Helper.fromJson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -19,7 +24,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val mainRepo: MainRepo
+    private val mainRepo: MainRepo,
+    private val mainRepoSync: MainRepoSync
 ) : ViewModel() {
     private val _auth: MutableStateFlow<AuthResponse?> = MutableStateFlow(null)
     val auth = _auth.asStateFlow()
@@ -34,6 +40,8 @@ class MainViewModel @Inject constructor(
     private val _patchedProduct: MutableStateFlow<ShopItem?> = MutableStateFlow(null)
     val patchedProduct = _patchedProduct.asStateFlow()
     private val _uploadMessage: MutableStateFlow<String?> = MutableStateFlow(null)
+
+    private val gson = Gson()
     val uploadMessage = _uploadMessage.asStateFlow()
 
     fun login(userName: String, password: String) {
@@ -49,6 +57,15 @@ class MainViewModel @Inject constructor(
                 }
 
             })
+        }
+    }
+
+    fun loginSync(userName: String, password: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            mainRepoSync.login(userName, password)?.let { response ->
+                val authResponse = gson.fromJson(response.body, AuthResponse::class.java)
+                _auth.emit(authResponse)
+            }
         }
     }
 
@@ -68,6 +85,15 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun fetchProductsSync() {
+        viewModelScope.launch(Dispatchers.IO) {
+            mainRepoSync.fetchProducts()?.let { response ->
+                val products: List<ShopItem>? = gson.fromJson(response.body)
+                _products.emit(products)
+            }
+        }
+    }
+
     fun addProduct(product: ShopItem) {
         viewModelScope.launch {
             mainRepo.addProduct(product, object : ZListener<ShopItem> {
@@ -83,6 +109,15 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun addProductSync(product: ShopItem) {
+        viewModelScope.launch(Dispatchers.IO) {
+            mainRepoSync.addProduct(product)?.let { response ->
+                val item = gson.fromJson(response.body, ShopItem::class.java)
+                _addedProduct.emit(item)
+            }
+        }
+    }
+
     fun deleteProduct(id: Int) {
         viewModelScope.launch {
             mainRepo.deleteProduct(id, object : ZListener<ShopItem> {
@@ -94,6 +129,15 @@ class MainViewModel @Inject constructor(
                     Log.e(TAG, "onFailure: $error", error)
                 }
             })
+        }
+    }
+
+    fun deleteProductSync(id: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            mainRepoSync.deleteProduct(id)?.let { response ->
+                val item = gson.fromJson(response.body, ShopItem::class.java)
+                _deletedProduct.emit(item)
+            }
         }
     }
 
@@ -112,6 +156,15 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun updateOrAddSync(id: Int, product: ShopItem) {
+        viewModelScope.launch(Dispatchers.IO) {
+            mainRepoSync.updateOrAdd(id, product)?.let { response ->
+                val item = gson.fromJson(response.body, ShopItem::class.java)
+                _puttedProduct.emit(item)
+            }
+        }
+    }
+
     fun update(id: Int, parameter: JsonObject) {
         viewModelScope.launch {
             mainRepo.update(id, parameter, object : ZListener<ShopItem> {
@@ -124,6 +177,15 @@ class MainViewModel @Inject constructor(
                     Log.e(TAG, "onFailure: $error", error)
                 }
             })
+        }
+    }
+
+    fun updateSync(id: Int, parameter: JsonObject) {
+        viewModelScope.launch(Dispatchers.IO) {
+            mainRepoSync.update(id, parameter)?.let { response ->
+                val item = gson.fromJson(response.body, ShopItem::class.java)
+                _patchedProduct.emit(item)
+            }
         }
     }
 
@@ -142,6 +204,15 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun updateSync(id: Int, parameter: NewTitle) {
+        viewModelScope.launch(Dispatchers.IO) {
+            mainRepoSync.update(id, parameter)?.let { response ->
+                val item = gson.fromJson(response.body, ShopItem::class.java)
+                _patchedProduct.emit(item)
+            }
+        }
+    }
+
     fun uploadImagePart(parts: List<MultipartBody>) {
         viewModelScope.launch {
             mainRepo.uploadImagePart(parts, object : ZListener<String> {
@@ -154,6 +225,14 @@ class MainViewModel @Inject constructor(
                     Log.e(TAG, "onFailure: $error", error)
                 }
             })
+        }
+    }
+
+    fun uploadImagePartSync(parts: List<MultipartBody>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            mainRepoSync.uploadImagePart(parts)?.let { response ->
+                _uploadMessage.emit(response.body)
+            }
         }
     }
 
