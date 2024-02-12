@@ -40,9 +40,9 @@ class MainViewModel @Inject constructor(
     private val _patchedProduct: MutableStateFlow<ShopItem?> = MutableStateFlow(null)
     val patchedProduct = _patchedProduct.asStateFlow()
     private val _uploadMessage: MutableStateFlow<String?> = MutableStateFlow(null)
+    val uploadMessage = _uploadMessage.asStateFlow()
 
     private val gson = Gson()
-    val uploadMessage = _uploadMessage.asStateFlow()
 
     fun login(userName: String, password: String) {
         viewModelScope.launch {
@@ -63,6 +63,7 @@ class MainViewModel @Inject constructor(
     fun loginSync(userName: String, password: String) {
         viewModelScope.launch(Dispatchers.IO) {
             mainRepoSync.login(userName, password)?.let { response ->
+                // The synchronized functions don't deserialize the response
                 val authResponse = gson.fromJson(response.body, AuthResponse::class.java)
                 _auth.emit(authResponse)
             }
@@ -88,6 +89,8 @@ class MainViewModel @Inject constructor(
     fun fetchProductsSync() {
         viewModelScope.launch(Dispatchers.IO) {
             mainRepoSync.fetchProducts()?.let { response ->
+                // Gson can't deserialize lists without type tokens so,
+                // I made an extension function in the Helper class
                 val products: List<ShopItem>? = gson.fromJson(response.body)
                 _products.emit(products)
             }
@@ -231,6 +234,7 @@ class MainViewModel @Inject constructor(
     fun uploadImagePartSync(parts: List<MultipartBody>) {
         viewModelScope.launch(Dispatchers.IO) {
             mainRepoSync.uploadImagePart(parts)?.let { response ->
+                // Response body is already a string, no need to deserialize
                 _uploadMessage.emit(response.body)
             }
         }

@@ -164,7 +164,7 @@ fun Fab(onFabClicked: () -> Unit) {
                 .padding(16.dp)
         ) {
             // Custom image for the FAB
-            Icon(imageVector = Icons.Rounded.Add, contentDescription = "Cancel")
+            Icon(imageVector = Icons.Rounded.Add, contentDescription = "Post or Upload")
         }
     }
 }
