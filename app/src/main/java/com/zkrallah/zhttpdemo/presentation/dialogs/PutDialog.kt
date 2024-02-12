@@ -178,7 +178,7 @@ fun PutDialog(
                                 category = categoryState,
                                 image = imageState
                             )
-                            mainViewModel.updateOrAddSync(item.id!!, updatedItem)
+                            mainViewModel.updateOrAdd(item.id!!, updatedItem)
                             onDismiss()
                         }) {
                             Text(text = "PUT")

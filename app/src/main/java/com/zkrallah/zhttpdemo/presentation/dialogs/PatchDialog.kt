@@ -90,7 +90,7 @@ fun PatchDialog(
                     ) {
                         Button(onClick = {
                             val newTitle = NewTitle(title = titleState)
-                            mainViewModel.updateSync(item.id!!, newTitle)
+                            mainViewModel.update(item.id!!, newTitle)
                             onDismiss()
                         }) {
                             Text(text = "PATCH")
