@@ -1,9 +1,11 @@
 package com.zkrallah.zhttpdemo.di
 
 import com.zkrallah.zhttp.ZHttpClient
+import com.zkrallah.zhttpdemo.data.repo.MainRepoCoroutineImpl
 import com.zkrallah.zhttpdemo.data.repo.MainRepoImpl
 import com.zkrallah.zhttpdemo.data.repo.MainRepoSyncImpl
 import com.zkrallah.zhttpdemo.domain.repo.MainRepo
+import com.zkrallah.zhttpdemo.domain.repo.MainRepoCoroutine
 import com.zkrallah.zhttpdemo.domain.repo.MainRepoSync
 import dagger.Module
 import dagger.Provides
@@ -64,6 +66,15 @@ object Module {
         @ImgurClient imgurClient: ZHttpClient,
     ): MainRepoSync {
         return MainRepoSyncImpl(storeClient, imgurClient)
+    }
+
+    @Provides
+    @Singleton
+    fun provideMainRepoCoroutine(
+        @StoreClient storeClient: ZHttpClient,
+        @ImgurClient imgurClient: ZHttpClient,
+    ): MainRepoCoroutine {
+        return MainRepoCoroutineImpl(storeClient, imgurClient)
     }
 
 }

@@ -29,7 +29,7 @@ class MainRepoSyncImpl @Inject constructor(
             addProperty("password", password)
         }
 
-        return ZPost(storeClient).doPost("auth/login", null, body, null)
+        return ZPost(storeClient).doPost("auth/login", body, null, null)
     }
 
     override suspend fun fetchProducts(): HttpResponse? {
@@ -37,7 +37,7 @@ class MainRepoSyncImpl @Inject constructor(
     }
 
     override suspend fun addProduct(product: ShopItem): HttpResponse? {
-        return ZPost(storeClient).doPost("products", null, product, null)
+        return ZPost(storeClient).doPost("products", product, null, null)
     }
 
     override suspend fun deleteProduct(id: Int): HttpResponse? {
@@ -45,21 +45,21 @@ class MainRepoSyncImpl @Inject constructor(
     }
 
     override suspend fun updateOrAdd(id: Int, product: ShopItem): HttpResponse? {
-        return ZPut(storeClient).doPut("products/$id", null, product, null)
+        return ZPut(storeClient).doPut("products/$id", product, null, null)
     }
 
     override suspend fun update(id: Int, parameter: JsonObject): HttpResponse? {
-        return ZPatch(storeClient).doPatch("products/$id", null, parameter, null)
+        return ZPatch(storeClient).doPatch("products/$id", parameter, null, null)
     }
 
     override suspend fun update(id: Int, parameter: NewTitle): HttpResponse? {
-        return ZPatch(storeClient).doPatch("products/$id", null, parameter, null)
+        return ZPatch(storeClient).doPatch("products/$id", parameter, null, null)
     }
 
     override suspend fun uploadImagePart(parts: List<MultipartBody>): HttpResponse? {
         val headers = listOf(
             Header("Authorization", Imgur.TOKEN)
         )
-        return ZMultipart(imgurClient).doMultipart("3/image", null, parts, headers)
+        return ZMultipart(imgurClient).doMultipart("3/image", parts, null, headers)
     }
 }

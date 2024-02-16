@@ -32,9 +32,9 @@ class MainActivity : ComponentActivity() {
         setObservers()
     }
 
-    private fun fetchProducts() = mainViewModel.fetchProducts()
+    private fun fetchProducts() = mainViewModel.fetchProductsCoroutine()
 
-    private fun login() = mainViewModel.login("mor_2314", "83r5^_")
+    private fun login() = mainViewModel.loginCoroutine("mor_2314", "83r5^_")
 
     private fun setObservers() {
         loginObserver()

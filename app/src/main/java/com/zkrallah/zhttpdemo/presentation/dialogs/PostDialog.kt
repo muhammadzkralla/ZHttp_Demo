@@ -56,7 +56,7 @@ fun PostDialog(
                     contentType = "image/*"
                 )
                 val parts = listOf(imageMultipartBody)
-                mainViewModel.uploadImagePart(parts)
+                mainViewModel.uploadImagePartCoroutine(parts)
             } else {
                 Log.d("PhotoPicker", "No media selected")
             }
@@ -182,7 +182,7 @@ fun PostDialog(
                                 description = descriptionState,
                                 category = categoryState
                             )
-                            mainViewModel.addProduct(item)
+                            mainViewModel.addProductCoroutine(item)
                             onDismiss()
                         }) {
                             Text(text = "PUSH")

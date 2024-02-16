@@ -12,6 +12,7 @@ import com.zkrallah.zhttpdemo.domain.model.AuthResponse
 import com.zkrallah.zhttpdemo.domain.model.NewTitle
 import com.zkrallah.zhttpdemo.domain.model.ShopItem
 import com.zkrallah.zhttpdemo.domain.repo.MainRepo
+import com.zkrallah.zhttpdemo.domain.repo.MainRepoCoroutine
 import com.zkrallah.zhttpdemo.domain.repo.MainRepoSync
 import com.zkrallah.zhttpdemo.util.Helper
 import com.zkrallah.zhttpdemo.util.Helper.fromJson
@@ -25,7 +26,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val mainRepo: MainRepo,
-    private val mainRepoSync: MainRepoSync
+    private val mainRepoSync: MainRepoSync,
+    private val mainRepoCoroutine: MainRepoCoroutine
 ) : ViewModel() {
     private val _auth: MutableStateFlow<AuthResponse?> = MutableStateFlow(null)
     val auth = _auth.asStateFlow()
@@ -43,6 +45,14 @@ class MainViewModel @Inject constructor(
     val uploadMessage = _uploadMessage.asStateFlow()
 
     private val gson = Gson()
+
+    fun loginCoroutine(userName: String, password: String) {
+        viewModelScope.launch {
+            val response = mainRepoCoroutine.login(userName, password)
+            Log.d(TAG, "loginCoroutine: $response")
+            _auth.emit(response?.body)
+        }
+    }
 
     fun login(userName: String, password: String) {
         viewModelScope.launch {
@@ -67,6 +77,14 @@ class MainViewModel @Inject constructor(
                 val authResponse = gson.fromJson(response.body, AuthResponse::class.java)
                 _auth.emit(authResponse)
             }
+        }
+    }
+
+    fun fetchProductsCoroutine() {
+        viewModelScope.launch {
+            val response = mainRepoCoroutine.fetchProducts()
+            Log.d(TAG, "fetchProductsCoroutine: $response")
+            _products.emit(response?.body)
         }
     }
 
@@ -97,6 +115,14 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun addProductCoroutine(product: ShopItem) {
+        viewModelScope.launch {
+            val response = mainRepoCoroutine.addProduct(product)
+            Log.d(TAG, "addProductCoroutine: $response")
+            _addedProduct.emit(response?.body)
+        }
+    }
+
     fun addProduct(product: ShopItem) {
         viewModelScope.launch {
             mainRepo.addProduct(product, object : ZListener<ShopItem> {
@@ -121,6 +147,14 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun deleteProductCoroutine(id: Int) {
+        viewModelScope.launch {
+            val response = mainRepoCoroutine.deleteProduct(id)
+            Log.d(TAG, "deleteProductCoroutine: $response")
+            _deletedProduct.emit(response?.body)
+        }
+    }
+
     fun deleteProduct(id: Int) {
         viewModelScope.launch {
             mainRepo.deleteProduct(id, object : ZListener<ShopItem> {
@@ -141,6 +175,14 @@ class MainViewModel @Inject constructor(
                 val item = gson.fromJson(response.body, ShopItem::class.java)
                 _deletedProduct.emit(item)
             }
+        }
+    }
+
+    fun updateOrAddCoroutine(id: Int, product: ShopItem) {
+        viewModelScope.launch {
+            val response = mainRepoCoroutine.updateOrAdd(id, product)
+            Log.d(TAG, "updateOrAddCoroutine: $response")
+            _puttedProduct.emit(response?.body)
         }
     }
 
@@ -168,6 +210,14 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun updateCoroutine(id: Int, parameter: JsonObject) {
+        viewModelScope.launch {
+            val response = mainRepoCoroutine.update(id, parameter)
+            Log.d(TAG, "updateCoroutine: $response")
+            _patchedProduct.emit(response?.body)
+        }
+    }
+
     fun update(id: Int, parameter: JsonObject) {
         viewModelScope.launch {
             mainRepo.update(id, parameter, object : ZListener<ShopItem> {
@@ -192,6 +242,14 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun updateCoroutine(id: Int, parameter: NewTitle) {
+        viewModelScope.launch {
+            val response = mainRepoCoroutine.update(id, parameter)
+            Log.d(TAG, "updateCoroutine: $response")
+            _patchedProduct.emit(response?.body)
+        }
+    }
+
     fun update(id: Int, newTitle: NewTitle) {
         viewModelScope.launch {
             mainRepo.update(id, newTitle, object : ZListener<ShopItem> {
@@ -213,6 +271,14 @@ class MainViewModel @Inject constructor(
                 val item = gson.fromJson(response.body, ShopItem::class.java)
                 _patchedProduct.emit(item)
             }
+        }
+    }
+
+    fun uploadImagePartCoroutine(parts: List<MultipartBody>) {
+        viewModelScope.launch {
+            val response = mainRepoCoroutine.uploadImagePart(parts)
+            Log.d(TAG, "uploadImagePartCoroutine: $response")
+            _uploadMessage.emit(response?.body)
         }
     }
 

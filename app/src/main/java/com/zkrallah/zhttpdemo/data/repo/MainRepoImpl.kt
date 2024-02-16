@@ -11,6 +11,7 @@ import com.zkrallah.zhttpdemo.di.StoreClient
 import com.zkrallah.zhttpdemo.domain.model.AuthResponse
 import com.zkrallah.zhttpdemo.domain.model.NewTitle
 import com.zkrallah.zhttpdemo.domain.model.ShopItem
+import com.zkrallah.zhttpdemo.domain.model.User
 import com.zkrallah.zhttpdemo.domain.repo.MainRepo
 import com.zkrallah.zhttpdemo.util.Imgur
 import javax.inject.Inject
@@ -20,12 +21,8 @@ class MainRepoImpl @Inject constructor(
     @ImgurClient private val imgurClient: ZHttpClient
 ) : MainRepo {
     override fun login(userName: String, password: String, callback: ZListener<AuthResponse>) {
-        val body = JsonObject().apply {
-            addProperty("username", userName)
-            addProperty("password", password)
-        }
-
-        val request = storeClient.post("auth/login", body, null, null, callback)
+        val body = User(userName, password)
+        val request = storeClient.post("", body, null, null, callback)
     }
 
     override fun fetchProducts(callback: ZListener<List<ShopItem>>) {
@@ -56,7 +53,7 @@ class MainRepoImpl @Inject constructor(
         val headers = listOf(
             Header("Authorization", Imgur.TOKEN)
         )
-        val request = imgurClient.multiPart("3/image", parts, headers, null, callback)
+        val request = imgurClient.multiPart("3/image", parts, null, headers, callback)
     }
 
     companion object {

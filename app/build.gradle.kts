@@ -69,7 +69,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation("com.github.muhammadzkralla:ZHttp:1.3")
+    implementation("com.github.muhammadzkralla:ZHttp:1.4")
     implementation("com.google.code.gson:gson:2.10.1")
     // Dagger Hilt
     implementation("com.google.dagger:hilt-android:2.50")
