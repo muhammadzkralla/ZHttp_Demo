@@ -6,15 +6,12 @@ import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.zkrallah.zhttp.MultipartBody
-import com.zkrallah.zhttp.Response
-import com.zkrallah.zhttp.ZListener
 import com.zkrallah.zhttpdemo.domain.model.AuthResponse
 import com.zkrallah.zhttpdemo.domain.model.NewTitle
 import com.zkrallah.zhttpdemo.domain.model.ShopItem
 import com.zkrallah.zhttpdemo.domain.repo.MainRepo
 import com.zkrallah.zhttpdemo.domain.repo.MainRepoCoroutine
 import com.zkrallah.zhttpdemo.domain.repo.MainRepoSync
-import com.zkrallah.zhttpdemo.util.Helper
 import com.zkrallah.zhttpdemo.util.Helper.fromJson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -56,17 +53,11 @@ class MainViewModel @Inject constructor(
 
     fun login(userName: String, password: String) {
         viewModelScope.launch {
-            mainRepo.login(userName, password, object : ZListener<AuthResponse> {
-                override fun onSuccess(response: Response<AuthResponse>?) {
-                    Log.d(TAG, "onSuccess: $response")
-                    _auth.value = response?.body
-                }
-
-                override fun onFailure(error: Exception) {
-                    Log.e(TAG, "onFailure: $error", error)
-                }
-
-            })
+            mainRepo.login(userName, password) { success, failure ->
+                if (success != null) {
+                    _auth.value = (success.body)
+                } else Log.e(TAG, "onFailure: ${failure?.message}", failure)
+            }
         }
     }
 
@@ -90,17 +81,11 @@ class MainViewModel @Inject constructor(
 
     fun fetchProducts() {
         viewModelScope.launch {
-            mainRepo.fetchProducts(object : ZListener<List<ShopItem>> {
-                override fun onSuccess(response: Response<List<ShopItem>>?) {
-                    Log.d(TAG, "onSuccess: $response")
-                    _products.value = response?.body
-                }
-
-                override fun onFailure(error: Exception) {
-                    Log.e(TAG, "onFailure: $error", error)
-                }
-
-            })
+            mainRepo.fetchProducts() { success, failure ->
+                if (success != null) {
+                    _products.value = (success.body)
+                } else Log.e(TAG, "onFailure: ${failure?.message}", failure)
+            }
         }
     }
 
@@ -125,16 +110,11 @@ class MainViewModel @Inject constructor(
 
     fun addProduct(product: ShopItem) {
         viewModelScope.launch {
-            mainRepo.addProduct(product, object : ZListener<ShopItem> {
-                override fun onSuccess(response: Response<ShopItem>?) {
-                    Log.d(TAG, "onSuccess: $response")
-                    _addedProduct.value = response?.body
-                }
-
-                override fun onFailure(error: Exception) {
-                    Log.e(TAG, "onFailure: $error", error)
-                }
-            })
+            mainRepo.addProduct(product) { success, failure ->
+                if (success != null) {
+                    _addedProduct.value = (success.body)
+                } else Log.e(TAG, "onFailure: ${failure?.message}", failure)
+            }
         }
     }
 
@@ -157,15 +137,11 @@ class MainViewModel @Inject constructor(
 
     fun deleteProduct(id: Int) {
         viewModelScope.launch {
-            mainRepo.deleteProduct(id, object : ZListener<ShopItem> {
-                override fun onSuccess(response: Response<ShopItem>?) {
-                    _deletedProduct.value = response?.body
-                }
-
-                override fun onFailure(error: Exception) {
-                    Log.e(TAG, "onFailure: $error", error)
-                }
-            })
+            mainRepo.deleteProduct(id) { success, failure ->
+                if (success != null) {
+                    _deletedProduct.value = (success.body)
+                } else Log.e(TAG, "onFailure: ${failure?.message}", failure)
+            }
         }
     }
 
@@ -188,16 +164,11 @@ class MainViewModel @Inject constructor(
 
     fun updateOrAdd(id: Int, product: ShopItem) {
         viewModelScope.launch {
-            mainRepo.updateOrAdd(id, product, object : ZListener<ShopItem> {
-                override fun onSuccess(response: Response<ShopItem>?) {
-                    Log.d(TAG, "onSuccess: $response")
-                    _puttedProduct.value = response?.body
-                }
-
-                override fun onFailure(error: Exception) {
-                    Log.e(TAG, "onFailure: $error", error)
-                }
-            })
+            mainRepo.updateOrAdd(id, product) { success, failure ->
+                if (success != null) {
+                    _puttedProduct.value = (success.body)
+                } else Log.e(TAG, "onFailure: ${failure?.message}", failure)
+            }
         }
     }
 
@@ -220,16 +191,11 @@ class MainViewModel @Inject constructor(
 
     fun update(id: Int, parameter: JsonObject) {
         viewModelScope.launch {
-            mainRepo.update(id, parameter, object : ZListener<ShopItem> {
-                override fun onSuccess(response: Response<ShopItem>?) {
-                    Log.d(TAG, "onSuccess: $response")
-                    _patchedProduct.value = response?.body
-                }
-
-                override fun onFailure(error: Exception) {
-                    Log.e(TAG, "onFailure: $error", error)
-                }
-            })
+            mainRepo.update(id, parameter) { success, failure ->
+                if (success != null) {
+                    _patchedProduct.value = (success.body)
+                } else Log.e(TAG, "onFailure: ${failure?.message}", failure)
+            }
         }
     }
 
@@ -252,16 +218,11 @@ class MainViewModel @Inject constructor(
 
     fun update(id: Int, newTitle: NewTitle) {
         viewModelScope.launch {
-            mainRepo.update(id, newTitle, object : ZListener<ShopItem> {
-                override fun onSuccess(response: Response<ShopItem>?) {
-                    Log.d(TAG, "onSuccess: $response")
-                    _patchedProduct.value = response?.body
-                }
-
-                override fun onFailure(error: Exception) {
-                    Log.e(TAG, "onFailure: $error", error)
-                }
-            })
+            mainRepo.update(id, newTitle) { success, failure ->
+                if (success != null) {
+                    _patchedProduct.value = (success.body)
+                } else Log.e(TAG, "onFailure: ${failure?.message}", failure)
+            }
         }
     }
 
@@ -284,16 +245,11 @@ class MainViewModel @Inject constructor(
 
     fun uploadImagePart(parts: List<MultipartBody>) {
         viewModelScope.launch {
-            mainRepo.uploadImagePart(parts, object : ZListener<String> {
-                override fun onSuccess(response: Response<String>?) {
-                    Log.d(TAG, "onSuccess: $response")
-                    _uploadMessage.value = response?.body
-                }
-
-                override fun onFailure(error: Exception) {
-                    Log.e(TAG, "onFailure: $error", error)
-                }
-            })
+            mainRepo.uploadImagePart(parts) { success, failure ->
+                if (success != null) {
+                    _uploadMessage.value = (success.body)
+                } else Log.e(TAG, "onFailure: ${failure?.message}", failure)
+            }
         }
     }
 

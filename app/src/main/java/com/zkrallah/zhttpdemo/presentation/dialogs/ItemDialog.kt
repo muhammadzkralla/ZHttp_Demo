@@ -56,7 +56,7 @@ fun ItemDialog(
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Button(onClick = {
-                            mainViewModel.deleteProductCoroutine(item.id ?: 0)
+                            mainViewModel.deleteProduct(item.id ?: 0)
                             onDismiss()
                         }) {
                             Text(text = "DELETE")
