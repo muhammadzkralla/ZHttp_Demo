@@ -1,16 +1,16 @@
 package com.zkrallah.zhttpdemo.data.repo
 
 import com.google.gson.JsonObject
-import com.zkrallah.zhttp.Header
-import com.zkrallah.zhttp.HttpResponse
-import com.zkrallah.zhttp.MultipartBody
-import com.zkrallah.zhttp.ZDelete
-import com.zkrallah.zhttp.ZGet
-import com.zkrallah.zhttp.ZHttpClient
-import com.zkrallah.zhttp.ZMultipart
-import com.zkrallah.zhttp.ZPatch
-import com.zkrallah.zhttp.ZPost
-import com.zkrallah.zhttp.ZPut
+import com.zkrallah.zhttp.model.Header
+import com.zkrallah.zhttp.model.HttpResponse
+import com.zkrallah.zhttp.model.MultipartBody
+import com.zkrallah.zhttp.core.ZDelete
+import com.zkrallah.zhttp.core.ZGet
+import com.zkrallah.zhttp.client.ZHttpClient
+import com.zkrallah.zhttp.core.ZMultipart
+import com.zkrallah.zhttp.core.ZPatch
+import com.zkrallah.zhttp.core.ZPost
+import com.zkrallah.zhttp.core.ZPut
 import com.zkrallah.zhttpdemo.di.ImgurClient
 import com.zkrallah.zhttpdemo.di.StoreClient
 import com.zkrallah.zhttpdemo.domain.model.NewTitle

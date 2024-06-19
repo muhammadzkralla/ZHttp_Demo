@@ -28,7 +28,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.zkrallah.zhttp.MultipartBody
+import com.zkrallah.zhttp.model.MultipartBody
 import com.zkrallah.zhttpdemo.domain.model.ShopItem
 import com.zkrallah.zhttpdemo.presentation.main.MainViewModel
 import com.zkrallah.zhttpdemo.util.cacheImageToFile
@@ -51,7 +51,7 @@ fun PostDialog(
                 val path = cacheImageToFile(context, uri)
                 val file = getImageFileFromRealPath(path)
                 val imageMultipartBody = MultipartBody(
-                    fileName = "image",
+                    name = "image",
                     filePath = file.toString(),
                     contentType = "image/*"
                 )

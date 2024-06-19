@@ -1,8 +1,8 @@
 package com.zkrallah.zhttpdemo.domain.repo
 
 import com.google.gson.JsonObject
-import com.zkrallah.zhttp.HttpResponse
-import com.zkrallah.zhttp.MultipartBody
+import com.zkrallah.zhttp.model.HttpResponse
+import com.zkrallah.zhttp.model.MultipartBody
 import com.zkrallah.zhttpdemo.domain.model.NewTitle
 import com.zkrallah.zhttpdemo.domain.model.ShopItem
 

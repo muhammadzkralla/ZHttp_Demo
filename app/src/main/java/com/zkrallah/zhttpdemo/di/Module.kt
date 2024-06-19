@@ -1,12 +1,14 @@
 package com.zkrallah.zhttpdemo.di
 
-import com.zkrallah.zhttp.ZHttpClient
+import com.zkrallah.zhttp.client.ZHttpClient
+import com.zkrallah.zhttp.model.Bearer
 import com.zkrallah.zhttpdemo.data.repo.MainRepoCoroutineImpl
 import com.zkrallah.zhttpdemo.data.repo.MainRepoImpl
 import com.zkrallah.zhttpdemo.data.repo.MainRepoSyncImpl
 import com.zkrallah.zhttpdemo.domain.repo.MainRepo
 import com.zkrallah.zhttpdemo.domain.repo.MainRepoCoroutine
 import com.zkrallah.zhttpdemo.domain.repo.MainRepoSync
+import com.zkrallah.zhttpdemo.util.Imgur
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -47,6 +49,7 @@ object Module {
             .baseUrl("https://api.imgur.com")
             .connectionTimeout(20000)
             .readTimeout(20000)
+            .authenticated(Bearer(Imgur.TOKEN))
             .build()
     }
 

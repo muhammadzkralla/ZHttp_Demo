@@ -1,10 +1,10 @@
 package com.zkrallah.zhttpdemo.data.repo
 
 import com.google.gson.JsonObject
-import com.zkrallah.zhttp.Header
-import com.zkrallah.zhttp.MultipartBody
-import com.zkrallah.zhttp.Response
-import com.zkrallah.zhttp.ZHttpClient
+import com.zkrallah.zhttp.client.ZHttpClient
+import com.zkrallah.zhttp.model.Header
+import com.zkrallah.zhttp.model.MultipartBody
+import com.zkrallah.zhttp.model.Response
 import com.zkrallah.zhttpdemo.di.ImgurClient
 import com.zkrallah.zhttpdemo.di.StoreClient
 import com.zkrallah.zhttpdemo.domain.model.AuthResponse
